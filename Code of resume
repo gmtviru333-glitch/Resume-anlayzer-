@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Resume Analyzer (Free)</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f4f6f8; margin:0; padding:0; }
+    .container { max-width:800px; margin:40px auto; background:#fff; padding:30px; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
+    h1 { text-align:center; }
+    textarea, input { width:100%; padding:12px; margin:10px 0; border-radius:6px; border:1px solid #ccc; }
+    button { width:100%; padding:14px; background:#4f46e5; color:white; border:none; border-radius:8px; font-size:16px; cursor:pointer; }
+    button:hover { background:#4338ca; }
+    .result { margin-top:20px; padding:15px; background:#f9fafb; border-radius:6px; }
+    .tag { display:inline-block; background:#e0e7ff; color:#1e3a8a; padding:6px 10px; border-radius:999px; margin:4px; font-size:13px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AI Resume Analyzer (Free)</h1>
+    <p>Paste your resume and job description. Get instant ATS-style feedback.</p>
+
+    <h3>Your Resume</h3>
+    <textarea id="resume" rows="8" placeholder="Paste your resume here..."></textarea>
+
+    <h3>Job Description</h3>
+    <textarea id="job" rows="6" placeholder="Paste the job description here..."></textarea>
+
+    <button onclick="analyze()">Analyze Resume</button>
+
+    <div id="output" class="result" style="display:none"></div>
+  </div>
+
+  <script>
+    function analyze() {
+      const resume = document.getElementById('resume').value.toLowerCase();
+      const job = document.getElementById('job').value.toLowerCase();
+      const output = document.getElementById('output');
+
+      if (!resume || !job) {
+        alert('Please paste both resume and job description');
+        return;
+      }
+
+      const jobWords = [...new Set(job.match(/\b[a-z]{4,}\b/g))];
+      const matched = jobWords.filter(w => resume.includes(w));
+      const missing = jobWords.filter(w => !resume.includes(w));
+
+      const score = Math.min(100, Math.round((matched.length / jobWords.length) * 100));
+
+      output.style.display = 'block';
+      output.innerHTML = `
+        <h3>ATS Match Score: ${score}%</h3>
+        <p><strong>Matched Keywords:</strong></p>
+        ${matched.map(w => `<span class="tag">${w}</span>`).join('') || 'None'}
+        <p style="margin-top:15px"><strong>Missing Keywords:</strong></p>
+        ${missing.map(w => `<span class="tag" style="background:#fee2e2;color:#7f1d1d">${w}</span>`).join('') || 'None'}
+        <p style="margin-top:15px">Tip: Add missing keywords naturally into your experience and skills sections.</p>
+      `;
+    }
+  </script>
+</body>
+</html>
